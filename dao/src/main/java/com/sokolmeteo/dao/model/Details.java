@@ -1,7 +1,8 @@
 package com.sokolmeteo.dao.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter @Setter
 public class Details {
 }
