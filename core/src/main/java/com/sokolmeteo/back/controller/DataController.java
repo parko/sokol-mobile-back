@@ -1,52 +1,35 @@
 package com.sokolmeteo.back.controller;
 
 import com.sokolmeteo.back.service.DataService;
-import com.sokolmeteo.dao.model.Details;
-import com.sokolmeteo.dao.model.Login;
-import com.sokolmeteo.sokol.http.HttpInteraction;
+import com.sokolmeteo.back.service.LoginService;
+import com.sokolmeteo.dao.model.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Base64;
-import java.util.StringTokenizer;
-
 @RestController
 @RequestMapping("/data")
 public class DataController {
-    private final HttpInteraction httpInteraction;
+    private final LoginService loginService;
     private final DataService dataService;
 
-    public DataController(HttpInteraction httpInteraction, DataService dataService) {
-        this.httpInteraction = httpInteraction;
+    public DataController(LoginService loginService, DataService dataService) {
+        this.loginService = loginService;
         this.dataService = dataService;
     }
 
     @PostMapping
     public ResponseEntity<Long> uploadFile(@RequestParam String credentials, @RequestBody MultipartFile file) {
-        return authorize(credentials) ? dataService.sendData(file) : new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        String login = loginService.login(credentials);
+        if (login == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return dataService.sendData(file, login);
     }
 
     @GetMapping("/{dataId}")
-    public ResponseEntity<String> getState(@RequestParam String credentials, @PathVariable String dataId) {
-        return authorize(credentials) ? dataService.getState(dataId) : new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }
-
-    @GetMapping("/{dataId}/details")
-    public ResponseEntity<Details> getDetails(@RequestParam String credentials, @PathVariable String dataId) {
-        return authorize(credentials) ? dataService.getDetails(dataId) : new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }
-
-    private boolean authorize(String credentials) {
-        try {
-            String decoded = new String(Base64.getDecoder().decode(credentials));
-            StringTokenizer tokenizer = new StringTokenizer(decoded, ":");
-            httpInteraction.login(new Login(tokenizer.nextToken(), tokenizer.nextToken()));
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public ResponseEntity<Log> getState(@RequestParam String credentials, @PathVariable Long dataId) {
+        String login = loginService.login(credentials);
+        if (login == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return dataService.getState(dataId, login);
     }
 }

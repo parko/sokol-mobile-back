@@ -1,16 +1,10 @@
 package com.sokolmeteo.dao.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Getter @Setter
-public class Login implements UserDetails {
+public class Login {
     private String loginType;
     private String login;
     private String password;
@@ -19,40 +13,5 @@ public class Login implements UserDetails {
         this.loginType = "email";
         this.login = login;
         this.password = password;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public String getUsername() {
-        return login;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }

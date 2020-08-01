@@ -10,10 +10,9 @@ import org.springframework.web.client.RestTemplate;
 public class HttpInteractionImpl implements HttpInteraction {
     private static final String URI = "https://sokolmeteo.com/platform/api/user/login";
 
-    @Override
-    public boolean login(Login login) {
+    public void login(Login login) {
+        System.out.println("FROM SOKOL");
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.exchange(URI, HttpMethod.POST, new HttpEntity<>(login), HttpResponse.class);
-        return true;
     }
 }

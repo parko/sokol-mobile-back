@@ -1,13 +1,11 @@
 package com.sokolmeteo.back.service;
 
-import com.sokolmeteo.dao.model.Details;
+import com.sokolmeteo.dao.model.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface DataService {
-    ResponseEntity<Long> sendData(MultipartFile file);
+    ResponseEntity<Long> sendData(MultipartFile file, String author);
 
-    ResponseEntity<String> getState(String dataId);
-
-    ResponseEntity<Details> getDetails(String dataId);
+    ResponseEntity<Log> getState(Long dataId, String author);
 }

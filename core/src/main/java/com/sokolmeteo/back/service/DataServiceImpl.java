@@ -1,7 +1,10 @@
 package com.sokolmeteo.back.service;
 
-import com.sokolmeteo.dao.model.Details;
-import com.sokolmeteo.dto.WeatherData;
+import com.sokolmeteo.dao.model.Log;
+import com.sokolmeteo.dao.model.WeatherData;
+import com.sokolmeteo.dao.repo.LogDao;
+import com.sokolmeteo.sokol.tcp.TcpInteraction;
+import com.sokolmeteo.sokol.tcp.TcpInteractionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,27 +18,49 @@ import java.util.stream.Collectors;
 
 @Service
 public class DataServiceImpl implements DataService {
+    private final TcpInteraction tcpInteraction;
+    private final LogDao logDao;
+
+    public DataServiceImpl(TcpInteraction tcpInteraction, LogDao logDao) {
+        this.tcpInteraction = tcpInteraction;
+        this.logDao = logDao;
+    }
+
     @Override
-    public ResponseEntity<Long> sendData(MultipartFile file) {
+    public ResponseEntity<Long> sendData(MultipartFile file, String author) {
+        Log log = new Log(author);
+        log = logDao.save(log);
         if (!file.isEmpty()) {
+            String details = null;
             try {
                 WeatherData data = processMessages(file);
-                return new ResponseEntity<>(0L, HttpStatus.OK);
+                for (String message : data.getBlackMessages()) {
+                    details = message;
+                    tcpInteraction.sendData(data.getLoginMessage(), message);
+                }
+                log.success();
+                logDao.save(log);
+                return new ResponseEntity<>(log.getId(), HttpStatus.OK);
             } catch (IOException e) {
-                return new ResponseEntity<>(1L, HttpStatus.OK);
+                log.fault("Bad file", null);
+                logDao.save(log);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            } catch (TcpInteractionException e) {
+                e.printStackTrace();
+                log.fault("Exception on sending message", details);
+                logDao.save(log);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
+        log.fault("File is empty", null);
+        logDao.save(log);
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @Override
-    public ResponseEntity<String> getState(String dataId) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Details> getDetails(String dataId) {
-        return null;
+    public ResponseEntity<Log> getState(Long dataId, String author) {
+        Log log = logDao.findByIdAndAuthor(dataId, author);
+        return log != null ? new ResponseEntity<>(log, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     private WeatherData processMessages(MultipartFile file) throws IOException {

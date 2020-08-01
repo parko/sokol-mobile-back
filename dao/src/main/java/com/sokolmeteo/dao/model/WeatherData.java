@@ -1,4 +1,4 @@
-package com.sokolmeteo.dto;
+package com.sokolmeteo.dao.model;
 
 import lombok.Getter;
 import lombok.Setter;
