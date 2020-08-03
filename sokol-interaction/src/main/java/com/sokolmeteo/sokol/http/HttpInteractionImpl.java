@@ -11,7 +11,6 @@ public class HttpInteractionImpl implements HttpInteraction {
     private static final String URI = "https://sokolmeteo.com/platform/api/user/login";
 
     public void login(Login login) {
-        System.out.println("FROM SOKOL");
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.exchange(URI, HttpMethod.POST, new HttpEntity<>(login), HttpResponse.class);
     }

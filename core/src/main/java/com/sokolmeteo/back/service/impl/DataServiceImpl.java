@@ -1,10 +1,10 @@
-package com.sokolmeteo.back.service;
+package com.sokolmeteo.back.service.impl;
 
+import com.sokolmeteo.back.service.DataService;
 import com.sokolmeteo.dao.model.Log;
 import com.sokolmeteo.dao.model.WeatherData;
 import com.sokolmeteo.dao.repo.LogDao;
-import com.sokolmeteo.sokol.tcp.TcpInteraction;
-import com.sokolmeteo.sokol.tcp.TcpInteractionException;
+import com.sokolmeteo.sokol.tcp.TcpClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class DataServiceImpl implements DataService {
-    private final TcpInteraction tcpInteraction;
     private final LogDao logDao;
+    private final TcpClient tcpClient;
 
-    public DataServiceImpl(TcpInteraction tcpInteraction, LogDao logDao) {
-        this.tcpInteraction = tcpInteraction;
+    public DataServiceImpl(LogDao logDao, TcpClient tcpClient) {
         this.logDao = logDao;
+        this.tcpClient = tcpClient;
     }
 
     @Override
@@ -31,25 +31,15 @@ public class DataServiceImpl implements DataService {
         Log log = new Log(author);
         log = logDao.save(log);
         if (!file.isEmpty()) {
-            String details = null;
             try {
                 WeatherData data = processMessages(file);
-                for (String message : data.getBlackMessages()) {
-                    details = message;
-                    tcpInteraction.sendData(data.getLoginMessage(), message);
-                }
-                log.success();
-                logDao.save(log);
+                DataSenderService dataSender = new DataSenderService(logDao, tcpClient).setData(data).setLog(log);
+                dataSender.start();
                 return new ResponseEntity<>(log.getId(), HttpStatus.OK);
             } catch (IOException e) {
-                log.fault("Bad file", null);
+                log.fault(e.getMessage(), null);
                 logDao.save(log);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            } catch (TcpInteractionException e) {
-                e.printStackTrace();
-                log.fault("Exception on sending message", details);
-                logDao.save(log);
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
         log.fault("File is empty", null);
@@ -69,17 +59,18 @@ public class DataServiceImpl implements DataService {
             List<String> lines =
                     new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                             .lines().collect(Collectors.toList());
-            data.setLoginMessage(lines.get(0));
+            data.setLoginMessage(lines.get(0) + "\r\n");
             List<String> payloads = new ArrayList<>();
-            String concatenated = lines.get(1);
+            StringBuilder concatenated = new StringBuilder(lines.get(1));
             for (String payload : lines.subList(2, lines.size())) {
                 if (concatenated.length() > 3500) {
-                    payloads.add(concatenated);
-                    concatenated = lines.get(1);
+                    concatenated.append("\r\n");
+                    payloads.add(concatenated.toString());
+                    concatenated = new StringBuilder(lines.get(1));
                 }
-                concatenated = concatenated.concat(payload);
+                concatenated.append(payload);
             }
-            payloads.add(concatenated);
+            payloads.add(concatenated.append("\r\n").toString());
             data.setBlackMessages(payloads);
         }
         return data;

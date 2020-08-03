@@ -2,10 +2,7 @@ package com.sokolmeteo.dao.model;
 
 import lombok.Getter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -18,6 +15,7 @@ public class Log {
     private Date created;
     private Date sent;
     private String state;
+    @Column(length = 4000)
     private String details;
     private String info;
 

@@ -1,5 +1,6 @@
-package com.sokolmeteo.back.service;
+package com.sokolmeteo.back.service.impl;
 
+import com.sokolmeteo.back.service.LoginService;
 import com.sokolmeteo.dao.model.Login;
 import com.sokolmeteo.sokol.http.HttpInteraction;
 import org.springframework.cache.annotation.Cacheable;
