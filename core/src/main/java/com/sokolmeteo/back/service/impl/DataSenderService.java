@@ -34,19 +34,19 @@ public class DataSenderService extends Thread {
         for (String message : data.getBlackMessages()) {
             try {
                 tcpClient.sendMessage(data.getLoginMessage(), message);
-                log.success();
-                logDao.save(log);
             } catch (IOException e) {
                 e.printStackTrace();
                 log.fault(e.getMessage(), null);
                 logDao.save(log);
-                break;
+                return;
             } catch (TcpClientException e) {
                 e.printStackTrace();
                 log.fault(e.getMessage(), e.getDetails());
                 logDao.save(log);
-                break;
+                return;
             }
         }
+        log.success();
+        logDao.save(log);
     }
 }
