@@ -19,7 +19,7 @@ public class DataController {
         this.dataService = dataService;
     }
 
-    @PostMapping("login")
+    @GetMapping("login")
     public ResponseEntity<String> authorize(@RequestParam String credentials) {
         String login = loginService.login(credentials);
         return login != null ? new ResponseEntity<>(login, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
