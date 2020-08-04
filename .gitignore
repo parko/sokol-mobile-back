@@ -10,9 +10,10 @@
 # Idea #
 /.idea/
 *.iml
+/.run/
 
 # Maven #
 /.mvn/
 mvnw
 mvnw.cmd
-/.target/
+**/target/

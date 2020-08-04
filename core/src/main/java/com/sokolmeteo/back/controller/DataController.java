@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/data")
+@RequestMapping("/")
 public class DataController {
     private final LoginService loginService;
     private final DataService dataService;
@@ -19,17 +19,23 @@ public class DataController {
         this.dataService = dataService;
     }
 
-    @PostMapping
+    @PostMapping("login")
+    public ResponseEntity<String> authorize(@RequestParam String credentials) {
+        String login = loginService.login(credentials);
+        return login != null ? new ResponseEntity<>(login, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @PostMapping("data")
     public ResponseEntity<Long> uploadFile(@RequestParam String credentials, @RequestBody MultipartFile file) {
         String login = loginService.login(credentials);
-        if (login == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (login == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return dataService.sendData(file, login);
     }
 
-    @GetMapping("/{dataId}")
+    @GetMapping("data/{dataId}")
     public ResponseEntity<Log> getState(@RequestParam String credentials, @PathVariable Long dataId) {
         String login = loginService.login(credentials);
-        if (login == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (login == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return dataService.getState(dataId, login);
     }
 }
