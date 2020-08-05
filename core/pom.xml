@@ -12,27 +12,23 @@
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
 
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <sokol.host>185.27.193.112</sokol.host>
-                <sokol.port>8002</sokol.port>
-                <logging.level>DEBUG</logging.level>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <sokol.host>localhost</sokol.host>
-                <sokol.port>8001</sokol.port>
-                <logging.level>INFO</logging.level>
-            </properties>
-        </profile>
-
-    </profiles>
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>dev</id>-->
+<!--            <properties>-->
+<!--                <sokol.host>185.27.193.112</sokol.host>-->
+<!--                <sokol.port>8002</sokol.port>-->
+<!--                <logging.level>INFO</logging.level>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 
     <dependencies>
+        <dependency>
+            <groupId>com.sokolmeteo</groupId>
+            <artifactId>dao</artifactId>
+            <version>0.0.1</version>
+        </dependency>
         <dependency>
             <groupId>com.sokolmeteo</groupId>
             <artifactId>sokol-interaction</artifactId>
@@ -57,33 +53,4 @@
             <version>${commons.io.version}</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.version}</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.sokolmeteo.back.Application</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
