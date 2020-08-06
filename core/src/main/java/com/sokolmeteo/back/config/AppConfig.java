@@ -1,5 +1,7 @@
 package com.sokolmeteo.back.config;
 
+import com.sokolmeteo.sokol.http.HttpInteraction;
+import com.sokolmeteo.sokol.http.HttpInteractionImpl;
 import com.sokolmeteo.sokol.tcp.TcpClient;
 import com.sokolmeteo.sokol.tcp.TcpClientImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,12 @@ public class AppConfig {
 
     @Bean
     public TcpClient tcpClient() {
-        return new TcpClientImpl(properties.getHost(), properties.getPort());
+        return new TcpClientImpl(properties.getTcpHost(), properties.getTcpPort());
+    }
+
+    @Bean
+    public HttpInteraction httpInteraction() {
+        return new HttpInteractionImpl(properties.getHttpHost());
     }
 
     @Bean

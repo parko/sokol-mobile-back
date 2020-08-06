@@ -6,16 +6,22 @@ import org.springframework.stereotype.Component;
 @Component
 @Profile("dev")
 public class DevProperties implements AppProperties {
-    private final String host = "185.27.193.112";
-    private final int port = 8002;
+    private final String tcpHost = "185.27.193.112";
+    private final int tcpPort = 8002;
+    private final String httpHost = "https://sokolmeteo.com";
 
     @Override
-    public String getHost() {
-        return host;
+    public String getTcpHost() {
+        return tcpHost;
     }
 
     @Override
-    public int getPort() {
-        return port;
+    public int getTcpPort() {
+        return tcpPort;
+    }
+
+    @Override
+    public String getHttpHost() {
+        return httpHost;
     }
 }

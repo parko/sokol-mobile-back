@@ -6,16 +6,21 @@ import org.springframework.stereotype.Component;
 @Component
 @Profile("prod")
 public class ProdProperties implements AppProperties {
-    private String host = "localhost";
-    private int port = 8001;
+    private final String tcpHost = "localhost";
+    private final int tcpPort = 8001;
 
     @Override
-    public String getHost() {
-        return host;
+    public String getTcpHost() {
+        return tcpHost;
     }
 
     @Override
-    public int getPort() {
-        return port;
+    public int getTcpPort() {
+        return tcpPort;
+    }
+
+    @Override
+    public String getHttpHost() {
+        return String.format("http://%s:%d", tcpHost, 8080);
     }
 }

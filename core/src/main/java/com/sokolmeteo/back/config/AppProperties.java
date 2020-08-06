@@ -1,6 +1,8 @@
 package com.sokolmeteo.back.config;
 
 public interface AppProperties {
-    String getHost();
-    int getPort();
+    String getTcpHost();
+    int getTcpPort();
+
+    String getHttpHost();
 }
