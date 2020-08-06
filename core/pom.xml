@@ -21,6 +21,14 @@
 <!--                <logging.level>INFO</logging.level>-->
 <!--            </properties>-->
 <!--        </profile>-->
+<!--        <profile>-->
+<!--            <id>prod</id>-->
+<!--            <properties>-->
+<!--                <sokol.host>localhost</sokol.host>-->
+<!--                <sokol.port>8001</sokol.port>-->
+<!--                <logging.level>INFO</logging.level>-->
+<!--            </properties>-->
+<!--        </profile>-->
 <!--    </profiles>-->
 
     <dependencies>

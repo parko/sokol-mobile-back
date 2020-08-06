@@ -3,7 +3,6 @@ package com.sokolmeteo.back.config;
 import com.sokolmeteo.sokol.tcp.TcpClient;
 import com.sokolmeteo.sokol.tcp.TcpClientImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +11,6 @@ import org.springframework.util.unit.DataSize;
 import javax.servlet.MultipartConfigElement;
 
 @Configuration
-@EnableConfigurationProperties(AppProperties.class)
 public class AppConfig {
     private AppProperties properties;
 
