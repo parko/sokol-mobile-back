@@ -5,6 +5,8 @@ import com.sokolmeteo.dao.model.Log;
 import com.sokolmeteo.dao.model.WeatherData;
 import com.sokolmeteo.dao.repo.LogDao;
 import com.sokolmeteo.sokol.tcp.TcpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class DataServiceImpl implements DataService {
+    private static final Logger logger = LoggerFactory.getLogger(DataServiceImpl.class);
+
     private final LogDao logDao;
     private final TcpClient tcpClient;
 
@@ -35,21 +39,25 @@ public class DataServiceImpl implements DataService {
                 WeatherData data = processMessages(file);
                 DataSenderService dataSender = new DataSenderService(logDao, tcpClient).setData(data).setLog(log);
                 dataSender.start();
+                logger.info("Sending data started - id=" + log.getId());
                 return new ResponseEntity<>(log.getId(), HttpStatus.OK);
             } catch (IOException e) {
                 log.fault(e.getMessage(), null);
                 logDao.save(log);
+                logger.warn("Error on reading data - id=" + log.getId());
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }
         log.fault("File is empty", null);
         logDao.save(log);
+        logger.warn("File is empty - id=" + log.getId());
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @Override
     public ResponseEntity<Log> getState(Long dataId, String author) {
         Log log = logDao.findByIdAndAuthor(dataId, author);
+        logger.info("Data found - id=" + dataId);
         return log != null ? new ResponseEntity<>(log, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

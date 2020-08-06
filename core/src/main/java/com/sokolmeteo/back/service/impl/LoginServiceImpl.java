@@ -15,8 +15,9 @@ import java.util.StringTokenizer;
 @Service
 @EnableCaching
 public class LoginServiceImpl implements LoginService {
-    private final HttpInteraction httpInteraction;
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+
+    private final HttpInteraction httpInteraction;
 
     public LoginServiceImpl(HttpInteraction httpInteraction) {
         this.httpInteraction = httpInteraction;

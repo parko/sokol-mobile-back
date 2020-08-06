@@ -9,6 +9,7 @@ import com.sokolmeteo.sokol.tcp.TcpClientException;
 import java.io.IOException;
 
 public class DataSenderService extends Thread {
+
     private WeatherData data;
     private Log log;
     private final LogDao logDao;

@@ -12,25 +12,6 @@
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
 
-<!--    <profiles>-->
-<!--        <profile>-->
-<!--            <id>dev</id>-->
-<!--            <properties>-->
-<!--                <sokol.host>185.27.193.112</sokol.host>-->
-<!--                <sokol.port>8002</sokol.port>-->
-<!--                <logging.level>INFO</logging.level>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            <id>prod</id>-->
-<!--            <properties>-->
-<!--                <sokol.host>localhost</sokol.host>-->
-<!--                <sokol.port>8001</sokol.port>-->
-<!--                <logging.level>INFO</logging.level>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--    </profiles>-->
-
     <dependencies>
         <dependency>
             <groupId>com.sokolmeteo</groupId>
