@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/")
 public class DataController {
@@ -37,5 +39,14 @@ public class DataController {
         String login = loginService.login(credentials);
         if (login == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return dataService.getState(dataId, login);
+    }
+
+    @GetMapping("data")
+    public ResponseEntity<List<Log>> getStates(@RequestParam String credentials,
+                                               @RequestParam(required = false) Integer page,
+                                               @RequestParam(required = false) Integer count) {
+        String login = loginService.login(credentials);
+        if (login == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return dataService.getStates(page, count, login);
     }
 }

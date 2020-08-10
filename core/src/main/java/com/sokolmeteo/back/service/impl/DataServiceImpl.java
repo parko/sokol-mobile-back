@@ -7,6 +7,9 @@ import com.sokolmeteo.dao.repo.LogDao;
 import com.sokolmeteo.sokol.tcp.TcpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,8 @@ public class DataServiceImpl implements DataService {
 
     private final LogDao logDao;
     private final TcpClient tcpClient;
+    private final int DEFAULT_PAGE = 0;
+    private final int DEFAULT_COUNT = 100;
 
     public DataServiceImpl(LogDao logDao, TcpClient tcpClient) {
         this.logDao = logDao;
@@ -59,6 +64,16 @@ public class DataServiceImpl implements DataService {
         Log log = logDao.findByIdAndAuthor(dataId, author);
         logger.info("Data found - id=" + dataId);
         return log != null ? new ResponseEntity<>(log, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public ResponseEntity<List<Log>> getStates(Integer page, Integer count, String author) {
+        Page<Log> pageableLogs = logDao.findAllByAuthor(author, PageRequest.of(
+                page != null ? page : DEFAULT_PAGE,
+                count != null ? count : DEFAULT_COUNT,
+                Sort.by("created").descending()));
+        logger.info("Data found for login " + author);
+        return new ResponseEntity<>(pageableLogs.getContent(), HttpStatus.OK);
     }
 
     private WeatherData processMessages(MultipartFile file) throws IOException {
