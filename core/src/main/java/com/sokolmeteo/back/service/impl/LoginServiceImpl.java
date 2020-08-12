@@ -1,6 +1,8 @@
 package com.sokolmeteo.back.service.impl;
 
 import com.sokolmeteo.back.service.LoginService;
+import com.sokolmeteo.dao.model.AuthSession;
+import com.sokolmeteo.dao.model.Device;
 import com.sokolmeteo.dao.model.Login;
 import com.sokolmeteo.sokol.http.HttpInteraction;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.StringTokenizer;
 
 @Service
@@ -25,19 +28,21 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     @Cacheable(value = "authorize", key = "#credentials")
-    public String login(String credentials) {
+    public AuthSession login(String credentials) {
+        AuthSession session = new AuthSession();
         try {
             String decoded = new String(Base64.getDecoder().decode(credentials));
             StringTokenizer tokenizer = new StringTokenizer(decoded, ":");
-            String login = tokenizer.nextToken();
-            httpInteraction.login(new Login(login, tokenizer.nextToken()));
-            logger.info("Authorized by " + login);
-            return login;
+            Login login = new Login(tokenizer.nextToken(), tokenizer.nextToken());
+            String sessionId = httpInteraction.login(login);
+            logger.info("Authorized by " + login.getLogin());
+            session.setLogin(login.getLogin());
+            session.setId(sessionId);
+            return session;
         } catch (Exception e) {
             e.printStackTrace();
-            logger.warn("Error on authorizing");
-            return null;
+            logger.warn(e.getMessage());
+            return session;
         }
-
     }
 }

@@ -1,9 +1,13 @@
 package com.sokolmeteo.back.service.impl;
 
 import com.sokolmeteo.back.service.DataService;
+import com.sokolmeteo.back.service.LoginService;
+import com.sokolmeteo.dao.model.AuthSession;
+import com.sokolmeteo.dao.model.Device;
 import com.sokolmeteo.dao.model.Log;
 import com.sokolmeteo.dao.model.WeatherData;
 import com.sokolmeteo.dao.repo.LogDao;
+import com.sokolmeteo.sokol.http.HttpInteraction;
 import com.sokolmeteo.sokol.tcp.TcpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,21 +31,30 @@ public class DataServiceImpl implements DataService {
 
     private final LogDao logDao;
     private final TcpClient tcpClient;
-    private final int DEFAULT_PAGE = 0;
-    private final int DEFAULT_COUNT = 100;
+    private final HttpInteraction httpInteraction;
 
-    public DataServiceImpl(LogDao logDao, TcpClient tcpClient) {
+    private final static int DEFAULT_PAGE = 0;
+    private final static int DEFAULT_COUNT = 100;
+
+    public DataServiceImpl(LogDao logDao, TcpClient tcpClient, HttpInteraction httpInteraction) {
         this.logDao = logDao;
         this.tcpClient = tcpClient;
+        this.httpInteraction = httpInteraction;
     }
 
     @Override
-    public ResponseEntity<Long> sendData(MultipartFile file, String author) {
-        Log log = new Log(author);
+    public ResponseEntity<Long> sendData(MultipartFile file, AuthSession session) {
+        Log log = new Log(session.getLogin());
         log = logDao.save(log);
         if (!file.isEmpty()) {
             try {
                 WeatherData data = processMessages(file);
+                if (!checkPermission(session, data.getDeviceImei())) {
+                    log.fault("No permission to device", data.getLoginMessage());
+                    logDao.save(log);
+                    return new ResponseEntity<>(log.getId(), HttpStatus.OK);
+                }
+
                 DataSenderService dataSender = new DataSenderService(logDao, tcpClient).setData(data).setLog(log);
                 dataSender.start();
                 logger.info("Sending data started - id=" + log.getId());
@@ -50,13 +63,13 @@ public class DataServiceImpl implements DataService {
                 log.fault(e.getMessage(), null);
                 logDao.save(log);
                 logger.warn("Error on reading data - id=" + log.getId());
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(log.getId(), HttpStatus.OK);
             }
         }
         log.fault("File is empty", null);
         logDao.save(log);
         logger.warn("File is empty - id=" + log.getId());
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(log.getId(), HttpStatus.OK);
     }
 
     @Override
@@ -97,5 +110,16 @@ public class DataServiceImpl implements DataService {
             data.setBlackMessages(payloads);
         }
         return data;
+    }
+
+    private boolean checkPermission(AuthSession session, String imei) {
+        List<Device> permittedDevices = httpInteraction.getPermittedDevice(session.getId());
+        if (permittedDevices != null) {
+            for (Device device : permittedDevices) {
+                if (device.getImei().equals(imei)) return true;
+            }
+        }
+        logger.warn(String.format("No permission for user %s to device %s", session.getLogin(), imei));
+        return false;
     }
 }

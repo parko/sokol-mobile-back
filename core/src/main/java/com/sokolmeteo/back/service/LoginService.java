@@ -1,5 +1,7 @@
 package com.sokolmeteo.back.service;
 
+import com.sokolmeteo.dao.model.AuthSession;
+
 public interface LoginService {
-    String login(String credentials);
+    AuthSession login(String credentials);
 }
