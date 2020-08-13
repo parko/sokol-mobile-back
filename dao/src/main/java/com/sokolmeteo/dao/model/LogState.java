@@ -1,18 +1,17 @@
 package com.sokolmeteo.dao.model;
 
 public enum LogState {
-    IN_PROGRESS("В ПРОЦЕССЕ"),
-    SENT("ОТПРАВЛЕНЫ"),
-    FAULT("ОШИБКА");
+    FAULT(0),
+    IN_PROGRESS(1),
+    SENT(2);
 
-    private final String name;
+    private final int code;
 
-    LogState(String name) {
-        this.name = name;
+    LogState(int code) {
+        this.code = code;
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public int getCode() {
+        return code;
     }
 }

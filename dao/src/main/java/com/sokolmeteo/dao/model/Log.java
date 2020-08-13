@@ -14,7 +14,7 @@ public class Log {
     private String author;
     private Date created;
     private Date sent;
-    private String state;
+    private int state;
     @Column(length = 4000)
     private String details;
     private String info;
@@ -25,17 +25,17 @@ public class Log {
     public Log(String author) {
         this.author = author;
         this.created = new Date();
-        this.state = LogState.IN_PROGRESS.toString();
+        this.state = LogState.IN_PROGRESS.getCode();
     }
 
     public void fault(String info, String details) {
-        this.state = LogState.FAULT.toString();
+        this.state = LogState.FAULT.getCode();
         this.info = info;
         this.details = details;
     }
 
     public void success() {
-        this.state = LogState.SENT.toString();
+        this.state = LogState.SENT.getCode();
         this.sent = new Date();
     }
 }
