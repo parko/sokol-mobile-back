@@ -1,14 +1,14 @@
 package com.sokolmeteo.dao.repo;
 
-import com.sokolmeteo.dao.model.Log;
+import com.sokolmeteo.dao.model.Record;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LogDao extends PagingAndSortingRepository<Log, Long> {
-    Log findByIdAndAuthor(Long id, String author);
+public interface RecordDao extends PagingAndSortingRepository<Record, Long> {
+    Record findByIdAndAuthor(Long id, String author);
 
-    Page<Log> findAllByAuthor(String author, Pageable request);
+    Page<Record> findAllByAuthor(String author, Pageable request);
 }

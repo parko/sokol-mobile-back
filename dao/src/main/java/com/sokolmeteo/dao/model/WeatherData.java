@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 @Getter @Setter
 public class WeatherData {
     private Long id;
+    private String author;
     private String loginMessage;
     private List<String> blackMessages = new ArrayList<>();
 

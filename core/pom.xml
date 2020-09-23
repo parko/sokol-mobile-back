@@ -20,6 +20,16 @@
         </dependency>
         <dependency>
             <groupId>com.sokolmeteo</groupId>
+            <artifactId>dto</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sokolmeteo</groupId>
+            <artifactId>utils</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sokolmeteo</groupId>
             <artifactId>sokol-interaction</artifactId>
             <version>0.0.1</version>
         </dependency>

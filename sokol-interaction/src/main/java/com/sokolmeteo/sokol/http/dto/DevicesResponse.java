@@ -1,4 +1,4 @@
-package com.sokolmeteo.sokol.http;
+package com.sokolmeteo.sokol.http.dto;
 
 import com.sokolmeteo.dao.model.Device;
 import lombok.Getter;

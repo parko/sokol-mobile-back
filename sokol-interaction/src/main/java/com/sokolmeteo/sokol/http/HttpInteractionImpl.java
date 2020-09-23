@@ -2,6 +2,8 @@ package com.sokolmeteo.sokol.http;
 
 import com.sokolmeteo.dao.model.Device;
 import com.sokolmeteo.dao.model.Login;
+import com.sokolmeteo.sokol.http.dto.DevicesResponse;
+import com.sokolmeteo.sokol.http.dto.LoginResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -24,21 +26,31 @@ public class HttpInteractionImpl implements HttpInteraction {
 
     @Override
     public String login(Login login) {
-        ResponseEntity<LoginResponse> responseEntity = new RestTemplate().exchange(URI + LOGIN_PATH,
-                HttpMethod.POST, new HttpEntity<>(login), LoginResponse.class);
-        List<String> cookies = responseEntity.getHeaders().get("Set-Cookie");
-        if (cookies != null && cookies.size() > 0)
+        try {
+            ResponseEntity<LoginResponse> response = new RestTemplate().exchange(URI + LOGIN_PATH,
+                    HttpMethod.POST, new HttpEntity<>(login), LoginResponse.class);
+            List<String> cookies = response.getHeaders().get("Set-Cookie");
+            if (cookies == null || cookies.size() < 1)
+                throw new SokolHttpException("Внутренняя ошибка");
             return cookies.get(0).split(";")[0];
-        throw new RestClientException("Error on authorizing");
+        } catch (RestClientException e) {
+            throw new SokolHttpException("Неверный логин или пароль");
+        }
     }
 
     @Override
     public List<Device> getPermittedDevice(String sessionId) {
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Cookie", sessionId);
-        ResponseEntity<DevicesResponse> response = new RestTemplate().exchange(URI + DEVICES_PATH + "?count=500",
-                HttpMethod.POST, new HttpEntity<>(headers), DevicesResponse.class);
-        if (response.getBody() != null) return response.getBody().getData();
-        throw new RestClientException("Error on getting devices");
+        try {
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.add("Cookie", sessionId);
+            ResponseEntity<DevicesResponse> response = new RestTemplate().exchange(URI + DEVICES_PATH + "?count=500",
+                    HttpMethod.POST, new HttpEntity<>(headers), DevicesResponse.class);
+            if (response.getBody() == null || response.getBody().getData().size() < 1) {
+                throw new SokolHttpException("Нет доступных устройств");
+            }
+            return response.getBody().getData();
+        } catch (RestClientException e) {
+            throw new SokolHttpException("Внутренняя ошибка");
+        }
     }
 }

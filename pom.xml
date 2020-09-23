@@ -28,6 +28,8 @@
         <module>dao</module>
         <module>sokol-interaction</module>
         <module>core</module>
+        <module>dto</module>
+        <module>utils</module>
     </modules>
     <build><plugins>
         <plugin>

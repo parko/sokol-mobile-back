@@ -1,4 +1,4 @@
-package com.sokolmeteo.sokol.http;
+package com.sokolmeteo.sokol.http.dto;
 
 import lombok.Getter;
 
