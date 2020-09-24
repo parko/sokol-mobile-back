@@ -3,10 +3,14 @@ package com.sokolmeteo.sokol.tcp;
 import com.sokolmeteo.dao.model.Record;
 import com.sokolmeteo.dao.model.WeatherData;
 import com.sokolmeteo.dao.repo.RecordDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -14,6 +18,8 @@ import java.util.concurrent.Future;
 
 @Service
 public class TcpInteractionImpl implements TcpInteraction {
+    private final static Logger logger = LoggerFactory.getLogger(TcpInteractionImpl.class);
+
     private final ExecutorService executors;
     private final RecordDao recordDao;
     private final TcpClient tcpClient;
@@ -27,21 +33,23 @@ public class TcpInteractionImpl implements TcpInteraction {
     @Override
     public Long send(WeatherData data) {
         Record record = recordDao.save(new Record(data.getAuthor()));
+        logger.info("Sending data " + record.getId());
         executors.execute(() -> {
-            long start = System.nanoTime();
+            long start = System.currentTimeMillis();
             List<Callable<String>> callables = new ArrayList<>();
             for (String message : data.getBlackMessages())
                 callables.add(() -> tcpClient.execute(data.getLoginMessage(), message));
             try {
                 List<Future<String>> results = executors.invokeAll(callables);
-                List<String> messages = new ArrayList<>();
+                Set<String> messages = new HashSet<>();
                 for (Future<String> future : results)
                     if (!future.get().equals("OK")) messages.add(future.get());
 
                 if (messages.size() > 0) record.setFault(messages.toString());
                 else record.setSuccess();
-                System.out.println("time on process: " + (System.nanoTime() - start));
+                logger.info("Data {} sent in {} sec.", record.getId(), System.currentTimeMillis() - start);
             } catch (InterruptedException | ExecutionException e) {
+                logger.warn("Exception on sending data {}: {}", record.getId(), e);
                 record.setFault("Внутренняя ошибка");
             }
             recordDao.save(record);

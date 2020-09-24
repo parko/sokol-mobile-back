@@ -32,22 +32,23 @@ public class DataServiceImpl implements DataService {
 
     private final TcpInteraction tcpInteraction;
     private final RecordDao recordDao;
-    private final HttpInteraction httpInteraction;
+    private final LoginService loginService;
 
     private final static int DEFAULT_PAGE = 0;
     private final static int DEFAULT_COUNT = 100;
 
-    public DataServiceImpl(TcpInteraction tcpInteraction, RecordDao recordDao, HttpInteraction httpInteraction) {
+    public DataServiceImpl(TcpInteraction tcpInteraction, RecordDao recordDao, HttpInteraction httpInteraction, LoginService loginService) {
         this.tcpInteraction = tcpInteraction;
         this.recordDao = recordDao;
-        this.httpInteraction = httpInteraction;
+        this.loginService = loginService;
     }
 
     @Override
-    public Long sendData(MultipartFile file, AuthSession session) {
+    public Long sendData(MultipartFile file, String credentials) {
         WeatherData data = parse(file);
-        checkPermission(session.getId(), data.getDeviceImei());
+        AuthSession session = loginService.checkPermission(credentials, data.getDeviceImei());
         data.setAuthor(session.getLogin());
+        logger.info("Received weather data from " + session.getLogin());
         return tcpInteraction.send(data);
     }
 
@@ -88,15 +89,8 @@ public class DataServiceImpl implements DataService {
             data.setBlackMessages(payloads);
             return data;
         } catch (IOException e) {
+            logger.warn("Exception on reading file: " + e);
             throw new FileParseException("Не удалось прочитать файл");
         }
-    }
-
-    private void checkPermission(String sessionId, String imei) {
-        List<Device> permittedDevices = httpInteraction.getPermittedDevice(sessionId);
-        for (Device device : permittedDevices) {
-            if (device.getImei().equals(imei)) return;
-        }
-        throw new NoDevicePermission("Нет доступа к устройству");
     }
 }

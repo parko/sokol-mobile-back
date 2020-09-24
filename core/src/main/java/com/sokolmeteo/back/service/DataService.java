@@ -1,13 +1,12 @@
 package com.sokolmeteo.back.service;
 
-import com.sokolmeteo.dao.model.AuthSession;
 import com.sokolmeteo.dao.model.Record;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface DataService {
-    Long sendData(MultipartFile file, AuthSession session);
+    Long sendData(MultipartFile file, String credentials);
 
     Record getState(Long dataId, String author);
 

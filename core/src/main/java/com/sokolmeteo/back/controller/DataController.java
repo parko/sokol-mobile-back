@@ -31,8 +31,7 @@ public class DataController {
 
     @PostMapping(Path.DATA)
     public DataResponse<Long> uploadFile(@RequestParam String credentials, @RequestBody MultipartFile file) {
-        AuthSession session = loginService.login(credentials);
-        return new DataResponse<>(dataService.sendData(file, session));
+        return new DataResponse<>(dataService.sendData(file, credentials));
     }
 
     @GetMapping(Path.DATA + "/{dataId}")
