@@ -47,7 +47,7 @@ public class TcpInteractionImpl implements TcpInteraction {
 
                 if (messages.size() > 0) record.setFault(messages.toString());
                 else record.setSuccess();
-                logger.info("Data {} sent in {} sec.", record.getId(), System.currentTimeMillis() - start);
+                logger.info("Sending data {} complete in {} sec.", record.getId(), (System.currentTimeMillis() - start) / 1000);
             } catch (InterruptedException | ExecutionException e) {
                 logger.warn("Exception on sending data {}: {}", record.getId(), e);
                 record.setFault("Внутренняя ошибка");

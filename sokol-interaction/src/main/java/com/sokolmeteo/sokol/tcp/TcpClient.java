@@ -3,7 +3,6 @@ package com.sokolmeteo.sokol.tcp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -14,7 +13,7 @@ public class TcpClient {
 
     private final String host;
     private final int port;
-    private static final int TIMEOUT = 30;
+    private static final int TIMEOUT_MIN = 3;
 
     public TcpClient(String host, int port) {
         this.host = host;
@@ -25,7 +24,7 @@ public class TcpClient {
         try (Socket socket = new Socket(host, port);
              OutputStream out = socket.getOutputStream();
              InputStream in = socket.getInputStream()) {
-            socket.setSoTimeout(TIMEOUT * 1000);
+            socket.setSoTimeout(TIMEOUT_MIN * 60_000);
             out.write(loginMessage.getBytes());
             byte[] response = new byte[1000];
             int length = in.read(response);

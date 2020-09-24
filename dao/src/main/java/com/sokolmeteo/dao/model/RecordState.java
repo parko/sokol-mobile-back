@@ -3,7 +3,7 @@ package com.sokolmeteo.dao.model;
 public enum RecordState {
     FAULT("FAULT"),
     IN_PROGRESS("IN_PROGRESS"),
-    SENT("OK");
+    SENT("SENT");
 
     private final String state;
 
