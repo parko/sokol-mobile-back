@@ -34,7 +34,7 @@ public class AppConfig {
 
     @Bean
     public ExecutorService executorService() {
-        return Executors.newCachedThreadPool();
+        return Executors.newFixedThreadPool(10);
     }
 
     @Bean

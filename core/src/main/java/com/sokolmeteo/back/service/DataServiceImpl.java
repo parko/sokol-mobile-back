@@ -72,8 +72,6 @@ public class DataServiceImpl implements DataService {
             List<String> lines =
                     new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                             .lines().collect(Collectors.toList());
-            if (lines.size() - 2 > 1000)
-                throw new FileParseException("Нельзя отправлять свыше 1000 сообщений");
             data.setLoginMessage(lines.get(0) + "\r\n");
             List<String> payloads = new ArrayList<>();
             StringBuilder concatenated = new StringBuilder(lines.get(1));

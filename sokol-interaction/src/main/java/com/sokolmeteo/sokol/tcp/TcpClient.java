@@ -39,7 +39,6 @@ public class TcpClient {
             if (!tokenizer.nextToken().startsWith("A") || tokenizer.nextToken().equals("0")) {
                 return "Неверный формат black message";
             }
-            Thread.sleep(100);
             return "OK";
         } catch (Exception e) {
             logger.error("Exception on sending message: " + e);
