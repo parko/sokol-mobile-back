@@ -1,14 +1,12 @@
 package com.sokolmeteo.back.service;
 
 import com.sokolmeteo.dao.model.AuthSession;
-import com.sokolmeteo.dao.model.Device;
 import com.sokolmeteo.dao.model.Record;
 import com.sokolmeteo.dao.model.WeatherData;
 import com.sokolmeteo.dao.repo.RecordDao;
 import com.sokolmeteo.sokol.http.HttpInteraction;
 import com.sokolmeteo.sokol.tcp.TcpInteraction;
 import com.sokolmeteo.utils.exception.FileParseException;
-import com.sokolmeteo.utils.exception.NoDevicePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

@@ -5,7 +5,6 @@ import com.sokolmeteo.DataResponse;
 import com.sokolmeteo.back.service.DataService;
 import com.sokolmeteo.back.service.LoginService;
 import com.sokolmeteo.utils.Path;
-import com.sokolmeteo.dao.model.AuthSession;
 import com.sokolmeteo.dao.model.Record;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
