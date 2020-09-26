@@ -5,7 +5,7 @@ import com.sokolmeteo.dao.model.Device;
 import com.sokolmeteo.dao.model.Login;
 import com.sokolmeteo.sokol.http.HttpInteraction;
 import com.sokolmeteo.sokol.http.SokolHttpException;
-import com.sokolmeteo.utils.exception.NoDevicePermission;
+import com.sokolmeteo.utils.exception.NoDevicePermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -49,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
             }
 
         }
-        throw new NoDevicePermission("Нет доступа к устройству");
+        throw new NoDevicePermissionException("Нет доступа к устройству");
     }
 
     private Login decode(String credentials) {

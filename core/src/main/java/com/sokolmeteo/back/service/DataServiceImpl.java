@@ -7,6 +7,7 @@ import com.sokolmeteo.dao.repo.RecordDao;
 import com.sokolmeteo.sokol.http.HttpInteraction;
 import com.sokolmeteo.sokol.tcp.TcpInteraction;
 import com.sokolmeteo.utils.exception.FileParseException;
+import com.sokolmeteo.utils.exception.NoDataFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -52,7 +53,7 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public Record getState(Long dataId, String author) {
-        return recordDao.findByIdAndAuthor(dataId, author);
+        return recordDao.findByIdAndAuthor(dataId, author).orElseThrow(() -> new NoDataFoundException("Данные не найдены"));
     }
 
     @Override
@@ -61,7 +62,8 @@ public class DataServiceImpl implements DataService {
                 page != null ? page : DEFAULT_PAGE,
                 count != null ? count : DEFAULT_COUNT,
                 Sort.by("created").descending()));
-        return pageableLogs.getContent();
+        if (pageableLogs.getContent().size() > 0) return pageableLogs.getContent();
+        else throw new NoDataFoundException("Данные не найдены");
     }
 
     private WeatherData parse(MultipartFile file) {
