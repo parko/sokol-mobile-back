@@ -4,8 +4,8 @@ import com.sokolmeteo.BaseResponse;
 import com.sokolmeteo.DataResponse;
 import com.sokolmeteo.back.service.DataService;
 import com.sokolmeteo.back.service.LoginService;
-import com.sokolmeteo.utils.Path;
 import com.sokolmeteo.dao.model.Record;
+import com.sokolmeteo.utils.Path;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,8 +29,10 @@ public class DataController {
     }
 
     @PostMapping(Path.DATA)
-    public DataResponse<Long> uploadFile(@RequestParam String credentials, @RequestBody MultipartFile file) {
-        return new DataResponse<>(dataService.sendData(file, credentials));
+    public DataResponse<Long> uploadFile(@RequestParam String credentials, @RequestParam String station,
+                                         @RequestParam Long start, @RequestParam Long end,
+                                         @RequestBody MultipartFile file) {
+        return new DataResponse<>(dataService.sendData(file, credentials, station, start, end));
     }
 
     @GetMapping(Path.DATA + "/{dataId}")

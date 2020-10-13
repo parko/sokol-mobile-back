@@ -4,7 +4,6 @@ import com.sokolmeteo.dao.model.AuthSession;
 import com.sokolmeteo.dao.model.Record;
 import com.sokolmeteo.dao.model.WeatherData;
 import com.sokolmeteo.dao.repo.RecordDao;
-import com.sokolmeteo.sokol.http.HttpInteraction;
 import com.sokolmeteo.sokol.tcp.TcpInteraction;
 import com.sokolmeteo.utils.exception.FileParseException;
 import com.sokolmeteo.utils.exception.NoDataFoundException;
@@ -36,15 +35,15 @@ public class DataServiceImpl implements DataService {
     private final static int DEFAULT_PAGE = 0;
     private final static int DEFAULT_COUNT = 100;
 
-    public DataServiceImpl(TcpInteraction tcpInteraction, RecordDao recordDao, HttpInteraction httpInteraction, LoginService loginService) {
+    public DataServiceImpl(TcpInteraction tcpInteraction, RecordDao recordDao, LoginService loginService) {
         this.tcpInteraction = tcpInteraction;
         this.recordDao = recordDao;
         this.loginService = loginService;
     }
 
     @Override
-    public Long sendData(MultipartFile file, String credentials) {
-        WeatherData data = parse(file);
+    public Long sendData(MultipartFile file, String credentials, String station, Long startDate, Long endDate) {
+        WeatherData data = parse(file, station, startDate, endDate);
         AuthSession session = loginService.checkPermission(credentials, data.getDeviceImei());
         data.setAuthor(session.getLogin());
         logger.info("Received weather data from " + session.getLogin());
@@ -53,7 +52,8 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public Record getState(Long dataId, String author) {
-        return recordDao.findByIdAndAuthor(dataId, author).orElseThrow(() -> new NoDataFoundException("Данные не найдены"));
+        return recordDao.findByIdAndAuthor(dataId, author)
+                .orElseThrow(() -> new NoDataFoundException("Данные не найдены"));
     }
 
     @Override
@@ -62,13 +62,13 @@ public class DataServiceImpl implements DataService {
                 page != null ? page : DEFAULT_PAGE,
                 count != null ? count : DEFAULT_COUNT,
                 Sort.by("created").descending()));
-        if (pageableLogs.getContent().size() > 0) return pageableLogs.getContent();
-        else throw new NoDataFoundException("Данные не найдены");
+        if (pageableLogs.getContent().size() < 1) throw new NoDataFoundException("Данные не найдены");
+        return pageableLogs.getContent();
     }
 
-    private WeatherData parse(MultipartFile file) {
+    private WeatherData parse(MultipartFile file, String station, Long start, Long end) {
         try (InputStream inputStream = file.getInputStream()) {
-            WeatherData data = new WeatherData();
+            WeatherData data = new WeatherData(station, start, end);
             List<String> lines =
                     new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                             .lines().collect(Collectors.toList());

@@ -7,9 +7,10 @@ import com.sokolmeteo.utils.exception.NoDataFoundException;
 import com.sokolmeteo.utils.exception.NoDevicePermissionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Collections;
 
@@ -19,13 +20,6 @@ public class ApiExceptionHandler {
     protected ResponseEntity<BaseResponse> handleSokolHttpException(final SokolHttpException e) {
         return new ResponseEntity<>(
                 new BaseResponse("FAULT", Collections.singletonList(e.getMessage())), HttpStatus.OK);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<BaseResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        return new ResponseEntity<>(
-                new BaseResponse("FAULT", Collections.singletonList(e.getMessage())), HttpStatus.OK);
-
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -50,6 +44,20 @@ public class ApiExceptionHandler {
     protected ResponseEntity<BaseResponse> handleNoDataFoundException(final NoDataFoundException e) {
         return new ResponseEntity<>(
                 new BaseResponse("FAULT", Collections.singletonList(e.getMessage())), HttpStatus.OK);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ResponseEntity<BaseResponse> handleMissingServletRequestParameterException(final MissingServletRequestParameterException e) {
+        String message = "Отсутствует параметра запроса: " + e.getParameterName();
+        return new ResponseEntity<>(
+                new BaseResponse("FAULT", Collections.singletonList(message)), HttpStatus.OK);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    private ResponseEntity<BaseResponse> handleMethodArgumentNotValidException(final MethodArgumentTypeMismatchException e) {
+        String message = String.format("Неверный тип данных параметра %s - ожидается %s", e.getName(), e.getRequiredType());
+        return new ResponseEntity<>(
+                new BaseResponse("FAULT", Collections.singletonList(message)), HttpStatus.OK);
     }
 
     @ExceptionHandler(Exception.class)

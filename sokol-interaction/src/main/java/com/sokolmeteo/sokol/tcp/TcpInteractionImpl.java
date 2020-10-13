@@ -1,5 +1,7 @@
 package com.sokolmeteo.sokol.tcp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sokolmeteo.dao.model.Record;
 import com.sokolmeteo.dao.model.WeatherData;
 import com.sokolmeteo.dao.repo.RecordDao;
@@ -32,7 +34,7 @@ public class TcpInteractionImpl implements TcpInteraction {
 
     @Override
     public Long send(WeatherData data) {
-        Record record = recordDao.save(new Record(data.getAuthor()));
+        Record record = recordDao.save(new Record(data.getAuthor(), data.getStation(), data.getStart(), data.getEnd()));
         logger.info("Sending data " + record.getId());
         executors.execute(() -> {
             long start = System.currentTimeMillis();
@@ -45,12 +47,12 @@ public class TcpInteractionImpl implements TcpInteraction {
                 for (Future<String> future : results)
                     if (!future.get().equals("OK")) messages.add(future.get());
 
-                if (messages.size() > 0) record.setFault(messages.toString());
+                if (messages.size() > 0) record.setFault(new ObjectMapper().writeValueAsString(messages));
                 else record.setSuccess();
                 logger.info("Sending data {} complete in {} sec.", record.getId(), (System.currentTimeMillis() - start) / 1000);
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException | ExecutionException | JsonProcessingException e) {
                 logger.warn("Exception on sending data {}: {}", record.getId(), e);
-                record.setFault("Внутренняя ошибка");
+                record.setFault("[\"Internal server error\"]");
             }
             recordDao.save(record);
         });

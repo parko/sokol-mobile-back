@@ -11,8 +11,17 @@ import java.util.StringTokenizer;
 public class WeatherData {
     private Long id;
     private String author;
+    private String station;
+    private Long start;
+    private Long end;
     private String loginMessage;
     private List<String> blackMessages = new ArrayList<>();
+
+    public WeatherData(String station, Long start, Long end) {
+        this.station = station;
+        this.start = start;
+        this.end = end;
+    }
 
     public String getDeviceImei() {
         StringTokenizer tokenizer = new StringTokenizer(loginMessage, "#;");

@@ -29,20 +29,18 @@ public class TcpClient {
             byte[] response = new byte[1000];
             int length = in.read(response);
             StringTokenizer tokenizer = new StringTokenizer(new String(response, 0, length), "#\r\n");
-            if (!tokenizer.nextToken().equals("AL") || !tokenizer.nextToken().equals("1")) {
-                return "Не удалось авторизовать устройство";
-            }
+            if (!tokenizer.nextToken().equals("AL") || !tokenizer.nextToken().equals("1"))
+                return "Unauthorized device";
 
             out.write(blackMessage.getBytes());
             length = socket.getInputStream().read(response);
             tokenizer = new StringTokenizer(new String(response, 0, length), "#\r\n");
-            if (!tokenizer.nextToken().startsWith("A") || tokenizer.nextToken().equals("0")) {
-                return "Неверный формат black message";
-            }
+            if (!tokenizer.nextToken().startsWith("A") || tokenizer.nextToken().equals("0"))
+                return "Invalid black message";
             return "OK";
         } catch (Exception e) {
             logger.error("Exception on sending message: " + e);
-            return "Внутренняя ошибка";
+            return "Internal server error";
         }
     }
 }
