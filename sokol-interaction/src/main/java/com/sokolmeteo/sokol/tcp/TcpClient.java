@@ -1,27 +1,28 @@
 package com.sokolmeteo.sokol.tcp;
 
+import com.sokolmeteo.sokol.config.ConnectionProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
+@Component
 public class TcpClient {
     private final Logger logger = LoggerFactory.getLogger(TcpClient.class);
 
-    private final String host;
-    private final int port;
+    private final ConnectionProps connectionProps;
     private static final int TIMEOUT_MIN = 3;
 
-    public TcpClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public TcpClient(ConnectionProps connectionProps) {
+        this.connectionProps = connectionProps;
     }
 
     public String execute(String loginMessage, String blackMessage) {
-        try (Socket socket = new Socket(host, port);
+        try (Socket socket = new Socket(connectionProps.getTcpHost(), connectionProps.getTcpPort());
              OutputStream out = socket.getOutputStream();
              InputStream in = socket.getInputStream()) {
             socket.setSoTimeout(TIMEOUT_MIN * 60_000);

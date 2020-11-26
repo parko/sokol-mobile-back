@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sokolmeteo</groupId>
-            <artifactId>dao</artifactId>
+            <artifactId>model</artifactId>
             <version>0.0.1</version>
             <scope>provided</scope>
         </dependency>
@@ -28,6 +28,11 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.13</version>
         </dependency>
     </dependencies>
 </project>

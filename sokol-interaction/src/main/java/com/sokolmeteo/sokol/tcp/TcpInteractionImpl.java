@@ -2,9 +2,9 @@ package com.sokolmeteo.sokol.tcp;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sokolmeteo.dao.model.Record;
-import com.sokolmeteo.dao.model.WeatherData;
-import com.sokolmeteo.dao.repo.RecordDao;
+import com.sokolmeteo.model.entity.Record;
+import com.sokolmeteo.model.entity.WeatherData;
+import com.sokolmeteo.model.repo.RecordRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,18 +23,18 @@ public class TcpInteractionImpl implements TcpInteraction {
     private final static Logger logger = LoggerFactory.getLogger(TcpInteractionImpl.class);
 
     private final ExecutorService executors;
-    private final RecordDao recordDao;
+    private final RecordRepo recordRepo;
     private final TcpClient tcpClient;
 
-    public TcpInteractionImpl(ExecutorService executors, RecordDao recordDao, TcpClient tcpClient) {
+    public TcpInteractionImpl(ExecutorService executors, RecordRepo recordRepo, TcpClient tcpClient) {
         this.executors = executors;
-        this.recordDao = recordDao;
+        this.recordRepo = recordRepo;
         this.tcpClient = tcpClient;
     }
 
     @Override
     public Long send(WeatherData data) {
-        Record record = recordDao.save(new Record(data.getAuthor(), data.getStation(), data.getStart(), data.getEnd()));
+        Record record = recordRepo.save(new Record(data.getAuthor(), data.getStation(), data.getStart(), data.getEnd()));
         logger.info("Sending data " + record.getId());
         executors.execute(() -> {
             long start = System.currentTimeMillis();
@@ -54,7 +54,7 @@ public class TcpInteractionImpl implements TcpInteraction {
                 logger.warn("Exception on sending data {}: {}", record.getId(), e);
                 record.setFault("[\"Internal server error\"]");
             }
-            recordDao.save(record);
+            recordRepo.save(record);
         });
         return record.getId();
     }
