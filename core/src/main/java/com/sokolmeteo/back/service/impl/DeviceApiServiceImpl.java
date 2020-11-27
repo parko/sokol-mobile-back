@@ -35,7 +35,8 @@ public class DeviceApiServiceImpl implements DeviceApiService {
 
     @Override
     public String save(String sessionId, DeviceDto deviceDto) {
-        return deviceService.save(sessionId, deviceMapper.dtoToDevice(deviceDto));
+        Device device = deviceDto.getId() != null ? deviceMapper.dtoToDevice(deviceDto) : deviceMapper.dtoToNewDevice(deviceDto);
+        return deviceService.save(sessionId, device);
     }
 
     @Override

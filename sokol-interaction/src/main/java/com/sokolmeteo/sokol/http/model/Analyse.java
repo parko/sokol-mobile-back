@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class Analyse {
-    @JsonProperty("id")
+    @JsonProperty(value = "id")
     private String id;
     @JsonProperty(value = "name", required = true)
     private String name;
