@@ -7,6 +7,7 @@ import com.sokolmeteo.dto.ValuableResponse;
 import com.sokolmeteo.utils.Path.DevicePath;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class DeviceApi {
 
     @PostMapping(path = DevicePath.SAVE)
     public ValuableResponse<String> save(@CookieValue(name = "JSESSIONID") String sessionId,
-                                         @RequestBody DeviceDto deviceDto) {
+                                         @Valid @RequestBody DeviceDto deviceDto) {
         return new ValuableResponse<>(service.save(sessionId, deviceDto));
     }
 

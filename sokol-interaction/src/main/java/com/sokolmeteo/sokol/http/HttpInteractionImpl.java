@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -69,11 +70,12 @@ public class HttpInteractionImpl implements HttpInteraction {
 
     @Override
     public <T extends SokolListResponse> ResponseEntity<T> postForList(String path, String cookies, Class<T> clazz) {
-        ResponseEntity<T> response = restTemplate.exchange(prepareUrl(path), HttpMethod.POST,
-                new HttpEntity<>(prepareHeaders(cookies)), clazz);
-        if (response.getStatusCode().equals(HttpStatus.FOUND))
+        try {
+            return restTemplate.exchange(prepareUrl(path), HttpMethod.POST,
+                    new HttpEntity<>(prepareHeaders(cookies)), clazz);
+        } catch (RestClientException e) {
             throw new HttpInteractionException("Unauthorized", "Сессия не авторизована");
-        else return response;
+        }
     }
 
     @Override

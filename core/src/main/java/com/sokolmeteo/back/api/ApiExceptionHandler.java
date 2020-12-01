@@ -10,6 +10,8 @@ import com.sokolmeteo.utils.exception.NoDataFoundException;
 import com.sokolmeteo.utils.exception.NoDevicePermissionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.StringTokenizer;
 
 @ControllerAdvice
@@ -72,10 +76,19 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity<BaseResponse> handleMethodArgumentNotValidException(final MethodArgumentTypeMismatchException e) {
+    protected ResponseEntity<BaseResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
         String message = String.format("Неверный тип данных параметра %s - ожидается %s", e.getName(), e.getRequiredType());
         return new ResponseEntity<>(
                 new BaseResponse("FAULT", Collections.singletonList(message)), HttpStatus.OK);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<BaseResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        List<String> errors = new ArrayList<>();
+        for (ObjectError error : e.getBindingResult().getAllErrors())
+            errors.add(error.getDefaultMessage());
+        return new ResponseEntity<>(
+                new BaseResponse("FAULT", errors), HttpStatus.OK);
     }
 
 //    @ExceptionHandler(Exception.class)

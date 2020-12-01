@@ -7,6 +7,8 @@ import com.sokolmeteo.dto.ValuableResponse;
 import com.sokolmeteo.utils.Path.AuthPath;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 public class LoginApi {
     private final LoginApiService service;
@@ -16,7 +18,7 @@ public class LoginApi {
     }
 
     @PostMapping(path = AuthPath.LOGIN)
-    public ValuableResponse<String> login(@RequestBody LoginDto loginDto) {
+    public ValuableResponse<String> login(@Valid @RequestBody LoginDto loginDto) {
         return new ValuableResponse<>(service.login(loginDto));
     }
 
@@ -26,7 +28,7 @@ public class LoginApi {
     }
 
     @PostMapping(path = AuthPath.REGISTRATION)
-    public ValuableResponse<String> register(@RequestBody ProfileDto profileDto) {
+    public ValuableResponse<String> register(@Valid @RequestBody ProfileDto profileDto) {
         return new ValuableResponse<>(service.register(profileDto));
     }
 
