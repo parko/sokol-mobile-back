@@ -1,5 +1,6 @@
 package com.sokolmeteo.sokol.http;
 
+import com.sokolmeteo.sokol.http.dto.SokolListResponse;
 import com.sokolmeteo.sokol.http.dto.SokolResponse;
 import org.springframework.http.ResponseEntity;
 
@@ -9,10 +10,10 @@ public interface HttpInteraction {
     //регистрация
     <T extends SokolResponse> ResponseEntity<T> post(String path, Object body, Class<T> clazz);
 
-    //разавторизация
+    //деавторизация
     void post(String path, String cookies);
 
-    //список устройств, список показаний, список прогнозов, список анализов
+    //список устройств, список прогнозов, список анализов
     <T extends SokolResponse> ResponseEntity<T> post(String path, String cookies,
                                                      Map<String, Object> params, Class<T> clazz);
 
@@ -20,6 +21,13 @@ public interface HttpInteraction {
     <T extends SokolResponse> ResponseEntity<T> post(String path, String cookies, Object body,
                                                      Class<T> clazz);
 
-    //удаление устройства, список параметров, удаление анализа
+    //удаление устройства, удаление анализа
     <T extends SokolResponse> ResponseEntity<T> post(String path, String cookies, Class<T> clazz);
+
+    //список параметров
+    <T extends SokolListResponse> ResponseEntity<T> postForList(String path, String cookies, Class<T> clazz);
+
+    //список показаний
+    <T extends SokolListResponse> ResponseEntity<T> postForList(String path, String cookies, Map<String, Object> params,
+                                                                Class<T> clazz);
 }

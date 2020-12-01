@@ -29,7 +29,7 @@ public class WRecordServiceImpl implements WRecordService {
             params.put("endDate", endDate);
         if (parameters != null)
             params.put("parameters", parameters);
-        ResponseEntity<WRecordResponse> response = httpInteraction.post(
+        ResponseEntity<WRecordResponse> response = httpInteraction.postForList(
                 AnalyticsPath.RECORD, "JSESSIONID=" + sessionId, params, WRecordResponse.class);
         return response.getBody();
     }

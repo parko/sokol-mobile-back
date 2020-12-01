@@ -1,6 +1,7 @@
 package com.sokolmeteo.sokol.http;
 
 import com.sokolmeteo.sokol.config.ConnectionProps;
+import com.sokolmeteo.sokol.http.dto.SokolListResponse;
 import com.sokolmeteo.sokol.http.dto.SokolResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,20 +41,9 @@ public class HttpInteractionImpl implements HttpInteraction {
     @Override
     public <T extends SokolResponse> ResponseEntity<T> post(String path, String cookies, Map<String, Object> params,
                                                             Class<T> clazz) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(prepareUrl(path));
-        if (params.size() > 0) {
-            uri.append("?");
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                uri.append(entry.getKey());
-                uri.append("=");
-                uri.append(entry.getValue());
-                uri.append("&");
-            }
-        }
-
         ResponseEntity<T> response =
-                restTemplate.exchange(uri.toString(), HttpMethod.POST, new HttpEntity<>(prepareHeaders(cookies)), clazz);
+                restTemplate.exchange(prepareUrl(path) + prepareParams(params), HttpMethod.POST,
+                        new HttpEntity<>(prepareHeaders(cookies)), clazz);
         if (response.getStatusCode().equals(HttpStatus.FOUND))
             throw new HttpInteractionException("Unauthorized", "Сессия не авторизована");
         else return response;
@@ -77,6 +67,26 @@ public class HttpInteractionImpl implements HttpInteraction {
         else return response;
     }
 
+    @Override
+    public <T extends SokolListResponse> ResponseEntity<T> postForList(String path, String cookies, Class<T> clazz) {
+        ResponseEntity<T> response = restTemplate.exchange(prepareUrl(path), HttpMethod.POST,
+                new HttpEntity<>(prepareHeaders(cookies)), clazz);
+        if (response.getStatusCode().equals(HttpStatus.FOUND))
+            throw new HttpInteractionException("Unauthorized", "Сессия не авторизована");
+        else return response;
+    }
+
+    @Override
+    public <T extends SokolListResponse> ResponseEntity<T> postForList(String path, String cookies,
+                                                                       Map<String, Object> params, Class<T> clazz) {
+        ResponseEntity<T> response =
+                restTemplate.exchange(prepareUrl(path) + prepareParams(params), HttpMethod.POST,
+                        new HttpEntity<>(prepareHeaders(cookies)), clazz);
+        if (response.getStatusCode().equals(HttpStatus.FOUND))
+            throw new HttpInteractionException("Unauthorized", "Сессия не авторизована");
+        else return response;
+    }
+
     private String prepareUrl(String path) {
         return connectionProps.getHttpHost() + path;
     }
@@ -85,5 +95,19 @@ public class HttpInteractionImpl implements HttpInteraction {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Cookie", cookies);
         return headers;
+    }
+
+    private String prepareParams(Map<String, Object> params) {
+        StringBuilder sb = new StringBuilder();
+        if (params.size() > 0) {
+            sb.append("?");
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                sb.append(entry.getKey());
+                sb.append("=");
+                sb.append(entry.getValue());
+                sb.append("&");
+            }
+        }
+        return sb.toString();
     }
 }

@@ -54,7 +54,7 @@ public class DeviceServiceImpl implements DeviceService {
     public List<Parameter> getParams(String sessionId, String deviceId) {
         String path = DevicePath.PARAMETERS.replaceFirst("\\{id\\}", deviceId);
         ResponseEntity<ParameterResponse> response =
-                httpInteraction.post(path, "JSESSIONID=" + sessionId, ParameterResponse.class);
+                httpInteraction.postForList(path, "JSESSIONID=" + sessionId, ParameterResponse.class);
         return response.getBody();
     }
 

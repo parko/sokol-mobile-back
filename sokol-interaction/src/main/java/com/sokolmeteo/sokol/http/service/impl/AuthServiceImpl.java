@@ -58,6 +58,6 @@ public class AuthServiceImpl implements AuthService {
         recoveryLogin.setLogin(login);
         ResponseEntity<LoginResponse> response =
                 httpInteraction.post(UserPath.RECOVER, recoveryLogin, LoginResponse.class);
-        return response.getBody().getSuccess() ? "OK" : "FAULT";
+        return response.getBody().isSuccess() ? "OK" : "FAULT";
     }
 }
