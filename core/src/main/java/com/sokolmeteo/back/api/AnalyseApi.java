@@ -6,6 +6,7 @@ import com.sokolmeteo.dto.ValuableResponse;
 import com.sokolmeteo.utils.Path.AnalysePath;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class AnalyseApi {
 
     @PostMapping(path = AnalysePath.SAVE)
     public ValuableResponse<String> save(@CookieValue(name = "JSESSIONID") String sessionId,
-                                         @RequestBody AnalyseDto analyseDto) {
+                                         @Valid @RequestBody AnalyseDto analyseDto) {
         return new ValuableResponse<>(service.save(sessionId, analyseDto));
     }
 

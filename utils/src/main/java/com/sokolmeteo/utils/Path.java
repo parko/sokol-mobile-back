@@ -24,12 +24,12 @@ public class Path {
 
     public final static class WeatherRecordPath {
         private final static String MAIN = API + "/record";
-        public final static String ALL = MAIN + "all";
+        public final static String ALL = MAIN + "/all";
     }
 
     public final static class ForecastPath {
         private final static String MAIN = API + "/forecast";
-        public final static String ALL = MAIN + "all";
+        public final static String ALL = MAIN + "/all";
     }
 
     public final static class AnalysePath {

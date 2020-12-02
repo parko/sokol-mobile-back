@@ -81,9 +81,8 @@ public class HttpInteractionImpl implements HttpInteraction {
     @Override
     public <T extends SokolListResponse> ResponseEntity<T> postForList(String path, String cookies,
                                                                        Map<String, Object> params, Class<T> clazz) {
-        ResponseEntity<T> response =
-                restTemplate.exchange(prepareUrl(path) + prepareParams(params), HttpMethod.POST,
-                        new HttpEntity<>(prepareHeaders(cookies)), clazz);
+        ResponseEntity<T> response = restTemplate.exchange(prepareUrl(path) + prepareParams(params),
+                HttpMethod.POST, new HttpEntity<>(prepareHeaders(cookies)), clazz);
         if (response.getStatusCode().equals(HttpStatus.FOUND))
             throw new HttpInteractionException("Unauthorized", "Сессия не авторизована");
         else return response;
