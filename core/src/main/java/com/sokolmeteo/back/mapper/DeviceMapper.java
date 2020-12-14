@@ -9,7 +9,9 @@ import org.mapstruct.Mappings;
 @Mapper(componentModel = "spring", uses = {ParameterMapper.class, PermissionMapper.class})
 public interface DeviceMapper {
     @Mappings({
-            @Mapping(target = "id", ignore = true)
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "longitude", ignore = true),
+            @Mapping(target = "latitude", ignore = true)
     })
     Device dtoToNewDevice(DeviceDto deviceDto);
 

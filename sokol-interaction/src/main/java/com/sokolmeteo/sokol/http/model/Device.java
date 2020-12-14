@@ -17,6 +17,10 @@ public class Device {
     private String imei;
     @JsonProperty(value = "password", required = true)
     private String password;
+    @JsonProperty(value = "latitude")
+    private String latitude;
+    @JsonProperty(value = "longitude")
+    private String longitude;
     @JsonProperty(value = "forecastActive", defaultValue = "false")
     private boolean forecastActive;
     @JsonProperty(value = "exactFarmingActive", defaultValue = "false")
