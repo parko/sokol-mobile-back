@@ -10,5 +10,5 @@ import org.springframework.stereotype.Component;
 public class ProdConnectionProps implements ConnectionProps {
     private final String tcpHost = "localhost";
     private final int tcpPort = 8001;
-    private final String httpHost = "localhost:8080";
+    private final String httpHost = "http://localhost:8080";
 }
