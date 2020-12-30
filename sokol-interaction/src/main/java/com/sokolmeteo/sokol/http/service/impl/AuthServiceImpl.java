@@ -8,10 +8,14 @@ import com.sokolmeteo.sokol.http.model.Profile;
 import com.sokolmeteo.sokol.http.SokolPath.UserPath;
 import com.sokolmeteo.sokol.http.model.RecoveryLogin;
 import com.sokolmeteo.sokol.http.service.AuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
@@ -19,6 +23,8 @@ import java.util.List;
 @Service
 @EnableCaching
 public class AuthServiceImpl implements AuthService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
+
     private final HttpInteraction httpInteraction;
 
     public AuthServiceImpl(HttpInteraction httpInteraction) {
@@ -26,10 +32,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Cacheable(value = "login", key = "#login.login.concat('-').concat(#login.password)")
+//    @Cacheable(value = "login", key = "#login.login.concat('-').concat(#login.password)")
     public String login(Login login) {
         try {
             ResponseEntity<LoginResponse> response = httpInteraction.post(UserPath.LOGIN, login, LoginResponse.class);
+            logger.info("Response received: {}", response.toString());
             List<String> headers = response.getHeaders().get("Set-Cookie");
             if (headers == null)
                 throw new HttpInteractionException("Internal error exception", "Внутренняя ошибка сервера");
@@ -41,7 +48,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String logout(String sessionId) {
-        httpInteraction.post(UserPath.LOGOUT, "JSESSIONID=" + sessionId);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Cookie", "JSESSIONID=" + sessionId);
+        httpInteraction.post(UserPath.LOGOUT, headers);
         return "OK";
     }
 
@@ -49,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
     public String register(Profile profile) {
         ResponseEntity<LoginResponse> response =
                 httpInteraction.post(UserPath.REGISTER, profile, LoginResponse.class);
+        logger.info("Response received: {}", response.toString());
         return response.getBody().getId();
     }
 
@@ -58,6 +68,7 @@ public class AuthServiceImpl implements AuthService {
         recoveryLogin.setLogin(login);
         ResponseEntity<LoginResponse> response =
                 httpInteraction.post(UserPath.RECOVER, recoveryLogin, LoginResponse.class);
+        logger.info("Response received: {}", response.toString());
         return response.getBody().isSuccess() ? "OK" : "FAULT";
     }
 }

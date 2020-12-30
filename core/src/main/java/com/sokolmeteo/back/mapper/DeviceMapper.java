@@ -11,7 +11,8 @@ public interface DeviceMapper {
     @Mappings({
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "longitude", ignore = true),
-            @Mapping(target = "latitude", ignore = true)
+            @Mapping(target = "latitude", ignore = true),
+            @Mapping(target = "lastDataReceivedDt", ignore = true)
     })
     Device dtoToNewDevice(DeviceDto deviceDto);
 

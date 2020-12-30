@@ -25,6 +25,8 @@ public class DeviceDto {
     private String latitude;
     @JsonProperty(value = "longitude")
     private String longitude;
+    @JsonProperty(value = "lastDataReceivedDt")
+    private String lastDataReceivedDt;
     @JsonProperty(value = "forecastActive", defaultValue = "false")
     private boolean forecastActive;
     @JsonProperty(value = "exactFarmingActive", defaultValue = "false")

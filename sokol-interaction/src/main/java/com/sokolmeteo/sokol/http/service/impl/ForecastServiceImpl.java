@@ -7,6 +7,8 @@ import com.sokolmeteo.sokol.http.model.Forecast;
 import com.sokolmeteo.sokol.http.service.ForecastService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +24,8 @@ public class ForecastServiceImpl implements ForecastService {
 
     @Override
     public List<Forecast> getForecasts(String sessionId, String deviceId, String startDate, String endDate, int start, int count, String sortField, String sortDir) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Cookie", "JSESSIONID=" + sessionId);
         Map<String, Object> params = new HashMap<>();
         params.put("deviceId", deviceId);
         params.put("start", start);
@@ -34,7 +38,7 @@ public class ForecastServiceImpl implements ForecastService {
         if (endDate != null)
             params.put("endDate", endDate);
         ResponseEntity<ForecastResponse> response = httpInteraction.post(
-                ForecastPath.FORECASTS, "JSESSIONID=" + sessionId, params, ForecastResponse.class);
+                ForecastPath.FORECASTS, headers, params, ForecastResponse.class);
         return response.getBody().getData();
     }
 }

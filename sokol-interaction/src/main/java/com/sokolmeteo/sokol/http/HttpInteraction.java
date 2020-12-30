@@ -3,6 +3,7 @@ package com.sokolmeteo.sokol.http;
 import com.sokolmeteo.sokol.http.dto.SokolListResponse;
 import com.sokolmeteo.sokol.http.dto.SokolResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
 
@@ -11,23 +12,24 @@ public interface HttpInteraction {
     <T extends SokolResponse> ResponseEntity<T> post(String path, Object body, Class<T> clazz);
 
     //деавторизация
-    void post(String path, String cookies);
+    void post(String path, MultiValueMap<String, String> headers);
 
     //список устройств, список прогнозов, список анализов
-    <T extends SokolResponse> ResponseEntity<T> post(String path, String cookies,
+    <T extends SokolResponse> ResponseEntity<T> post(String path, MultiValueMap<String, String> headers,
                                                      Map<String, Object> params, Class<T> clazz);
 
     //сохранение устройства, сохранение анализа
-    <T extends SokolResponse> ResponseEntity<T> post(String path, String cookies, Object body,
+    <T extends SokolResponse> ResponseEntity<T> post(String path, MultiValueMap<String, String> headers, Object body,
                                                      Class<T> clazz);
 
     //удаление устройства, удаление анализа
-    <T extends SokolResponse> ResponseEntity<T> post(String path, String cookies, Class<T> clazz);
+    <T extends SokolResponse> ResponseEntity<T> post(String path, MultiValueMap<String, String> headers, Class<T> clazz);
 
     //список параметров
-    <T extends SokolListResponse> ResponseEntity<T> postForList(String path, String cookies, Class<T> clazz);
+    <T extends SokolListResponse> ResponseEntity<T> postForList(String path, MultiValueMap<String, String> headers,
+                                                                Class<T> clazz);
 
     //список показаний
-    <T extends SokolListResponse> ResponseEntity<T> postForList(String path, String cookies, Map<String, Object> params,
-                                                                Class<T> clazz);
+    <T extends SokolListResponse> ResponseEntity<T> postForList(String path, MultiValueMap<String, String> headers,
+                                                                Map<String, Object> params, Class<T> clazz);
 }
