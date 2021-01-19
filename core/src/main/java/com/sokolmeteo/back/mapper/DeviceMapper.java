@@ -17,10 +17,9 @@ public interface DeviceMapper {
     Device dtoToNewDevice(DeviceDto deviceDto);
 
     @Mappings({
-            @Mapping(target = "params", ignore = true),
-            @Mapping(target = "permissions", ignore = true)
+            @Mapping(target = "params", ignore = true)
     })
-    Device dtoToDevice(DeviceDto deviceDto);
+    Device renewDevice(DeviceDto deviceDto);
 
     DeviceDto deviceToDto(Device device);
 }
