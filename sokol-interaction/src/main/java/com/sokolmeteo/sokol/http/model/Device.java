@@ -37,4 +37,10 @@ public class Device {
     private List<Parameter> params = new ArrayList<>();
     @JsonProperty(value = "permissions")
     private List<Permission> permissions = new ArrayList<>();
+    @JsonProperty(value = "objectPermission")
+    private String objectPermission;
+    @JsonProperty(value = "userId")
+    private String userId;
+    @JsonProperty(value = "userName")
+    private String userName;
 }
