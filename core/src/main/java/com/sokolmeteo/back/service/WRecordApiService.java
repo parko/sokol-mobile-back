@@ -1,8 +1,10 @@
 package com.sokolmeteo.back.service;
 
+import com.sokolmeteo.dto.ParameterDto;
+
 import java.util.List;
 import java.util.Map;
 
 public interface WRecordApiService {
-    List<Map<String, Object>> getAll(String sessionId, String deviceId, String startDate, String endDate, String params);
+    List<ParameterDto> getAll(String sessionId, String deviceId, String startDate, String endDate, String params);
 }

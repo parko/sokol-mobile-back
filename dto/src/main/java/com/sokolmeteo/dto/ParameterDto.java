@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.Map;
+
 @Getter @Setter
 public class ParameterDto {
     @JsonProperty(value = "id")
@@ -28,4 +31,6 @@ public class ParameterDto {
     private String maxValue;
     @JsonProperty(value = "color")
     private String color;
+    @JsonProperty(value = "records")
+    private List<WRecordDto> records;
 }
