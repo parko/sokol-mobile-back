@@ -39,9 +39,11 @@ public class WRecordApiServiceImpl implements WRecordApiService {
         for (ParameterDto parameter : parameters) {
             List<WRecordDto> records = new ArrayList<>();
             for (Map<String, Object> record : data) {
-                String date = record.get("date").toString();
-                String value = record.get(parameter.getCode()) != null ? record.get(parameter.getCode()).toString() : null;
-                records.add(new WRecordDto(date, value));
+                if (record.get(parameter.getCode()) != null) {
+                    String date = record.get("date").toString();
+                    String value = record.get(parameter.getCode()).toString();
+                    records.add(new WRecordDto(date, value));
+                }
             }
             parameter.setRecords(records);
         }
