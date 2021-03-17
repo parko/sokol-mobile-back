@@ -68,7 +68,9 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void checkPermission(String sessionId, String deviceImei) {
-        for (Device device : getDevices(sessionId, 0, 500, null, "desc")) {
+        List<Device> devices = getDevices(
+                sessionId.replaceAll("JSESSIONID=", ""), 0, 500, null, "desc");
+        for (Device device : devices) {
             if (device.getImei().equals(deviceImei))
                 return;
         }
