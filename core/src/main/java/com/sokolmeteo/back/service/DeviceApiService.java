@@ -8,6 +8,8 @@ import java.util.List;
 public interface DeviceApiService {
     List<DeviceDto> getAll(String sessionId, int start, int count, String sortField, String sortDir);
 
+    DeviceDto get(String sessionId, String id);
+
     String save(String sessionId, DeviceDto deviceDto);
 
     String delete(String sessionId, String deviceId);

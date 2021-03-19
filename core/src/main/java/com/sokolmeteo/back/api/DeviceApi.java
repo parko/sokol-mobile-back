@@ -27,6 +27,12 @@ public class DeviceApi {
         return new ValuableResponse<>(service.getAll(sessionId, start, count, sortField, sortDir));
     }
 
+    @GetMapping(path = DevicePath.GET_ONE + "/{id}")
+    public ValuableResponse<DeviceDto> get(@CookieValue(name = "JSESSIONID") String sessionId,
+                                           @PathVariable String id) {
+        return new ValuableResponse<>(service.get(sessionId, id));
+    }
+
     @PostMapping(path = DevicePath.SAVE)
     public ValuableResponse<String> save(@CookieValue(name = "JSESSIONID") String sessionId,
                                          @Valid @RequestBody DeviceDto deviceDto) {
@@ -34,7 +40,8 @@ public class DeviceApi {
     }
 
     @DeleteMapping(path = DevicePath.DELETION + "/{id}")
-    public ValuableResponse<String> delete(@CookieValue(name = "JSESSIONID") String sessionId, @PathVariable String id) {
+    public ValuableResponse<String> delete(@CookieValue(name = "JSESSIONID") String sessionId,
+                                           @PathVariable String id) {
         return new ValuableResponse<>(service.delete(sessionId, id));
     }
 

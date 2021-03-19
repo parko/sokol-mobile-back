@@ -2,7 +2,7 @@ package com.sokolmeteo.sokol.http.service.impl;
 
 import com.sokolmeteo.sokol.http.HttpInteraction;
 import com.sokolmeteo.sokol.http.SokolPath.DevicePath;
-import com.sokolmeteo.sokol.http.dto.DeviceResponse;
+import com.sokolmeteo.sokol.http.dto.DevicesResponse;
 import com.sokolmeteo.sokol.http.dto.ParameterResponse;
 import com.sokolmeteo.sokol.http.model.Device;
 import com.sokolmeteo.sokol.http.model.Parameter;
@@ -34,17 +34,27 @@ public class DeviceServiceImpl implements DeviceService {
         params.put("count", count);
         params.put("sortDir", sortDir);
         if (sortField != null) params.put("sortField", sortField);
-        ResponseEntity<DeviceResponse> response =
-                httpInteraction.post(DevicePath.DEVICES, headers, params, DeviceResponse.class);
+        ResponseEntity<DevicesResponse> response =
+                httpInteraction.post(DevicePath.DEVICES, headers, params, DevicesResponse.class);
         return response.getBody().getData();
+    }
+
+    @Override
+    public Device getDevice(String sessionId, String id) {
+        String path = DevicePath.DEVICE.replaceFirst("\\{id\\}", id);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Cookie", "JSESSIONID=" + sessionId);
+        ResponseEntity<Device> response =
+                httpInteraction.get(path, headers, Device.class);
+        return response.getBody();
     }
 
     @Override
     public String save(String sessionId, Device device) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Cookie", "JSESSIONID=" + sessionId);
-        ResponseEntity<DeviceResponse> response =
-                httpInteraction.post(DevicePath.SAVE, headers, device, DeviceResponse.class);
+        ResponseEntity<DevicesResponse> response =
+                httpInteraction.post(DevicePath.SAVE, headers, device, DevicesResponse.class);
         return response.getBody().isSuccess() ? "OK" : "FAULT";
     }
 
@@ -53,7 +63,7 @@ public class DeviceServiceImpl implements DeviceService {
         String path = DevicePath.DELETE.replaceFirst("\\{id\\}", deviceId);
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Cookie", "JSESSIONID=" + sessionId);
-        ResponseEntity<DeviceResponse> response = httpInteraction.post(path, headers, DeviceResponse.class);
+        ResponseEntity<DevicesResponse> response = httpInteraction.post(path, headers, DevicesResponse.class);
         return response.getBody().isSuccess() ? "OK" : "FAULT";
     }
 

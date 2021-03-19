@@ -6,7 +6,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class DeviceResponse extends SokolResponse {
+public class DevicesResponse extends SokolResponse {
     @Getter
     @JsonProperty(value = "pages")
     private int pages;

@@ -11,6 +11,10 @@ import java.util.List;
 public class Device {
     @JsonProperty(value = "id")
     private String id;
+    @JsonProperty(value = "created")
+    private String created;
+    @JsonProperty(value = "changed")
+    private String changed;
     @JsonProperty(value = "name", required = true)
     private String name;
     @JsonProperty(value = "imei", required = true)

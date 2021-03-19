@@ -35,6 +35,14 @@ public class HttpInteractionImpl implements HttpInteraction {
     }
 
     @Override
+    public <T> ResponseEntity<T> get(String path, MultiValueMap<String, String> headers, Class<T> clazz) {
+        URI uri = buildUri(path);
+        RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
+        logger.debug("Sending request: {}", request.toString());
+        return restTemplate.exchange(request, clazz);
+    }
+
+    @Override
     public void post(String path, MultiValueMap<String, String> headers) {
         URI uri = buildUri(path);
         RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.POST, uri);

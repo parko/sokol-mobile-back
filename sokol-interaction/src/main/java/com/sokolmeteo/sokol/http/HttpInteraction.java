@@ -2,6 +2,7 @@ package com.sokolmeteo.sokol.http;
 
 import com.sokolmeteo.sokol.http.dto.SokolListResponse;
 import com.sokolmeteo.sokol.http.dto.SokolResponse;
+import com.sokolmeteo.sokol.http.model.Device;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
@@ -10,6 +11,8 @@ import java.util.Map;
 public interface HttpInteraction {
     //регистрация
     <T extends SokolResponse> ResponseEntity<T> post(String path, Object body, Class<T> clazz);
+
+    <T> ResponseEntity<T> get(String path, MultiValueMap<String, String> headers, Class<T> clazz);
 
     //деавторизация
     void post(String path, MultiValueMap<String, String> headers);

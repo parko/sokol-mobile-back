@@ -17,6 +17,7 @@ public class Path {
     public final static class DevicePath {
         private final static String MAIN = API + "/device";
         public final static String ALL = MAIN + "/all";
+        public final static String GET_ONE = MAIN + "";
         public final static String SAVE = MAIN + "";
         public final static String DELETION = MAIN + "";
         public final static String PARAMS = MAIN + "/parameter";
