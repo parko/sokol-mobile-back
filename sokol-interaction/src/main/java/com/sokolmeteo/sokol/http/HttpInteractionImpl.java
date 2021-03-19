@@ -35,11 +35,16 @@ public class HttpInteractionImpl implements HttpInteraction {
     }
 
     @Override
-    public <T> ResponseEntity<T> get(String path, MultiValueMap<String, String> headers, Class<T> clazz) {
+    public <T extends SokolResponse> ResponseEntity<T> get(String path, MultiValueMap<String, String> headers, Class<T> clazz) {
         URI uri = buildUri(path);
         RequestEntity<Object> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
         logger.debug("Sending request: {}", request.toString());
-        return restTemplate.exchange(request, clazz);
+        try {
+            logger.debug("Sending request: {}", request.toString());
+            return restTemplate.exchange(request, clazz);
+        } catch (RestClientException e) {
+            throw new HttpInteractionException("Unauthorized", "Сессия не авторизована");
+        }
     }
 
     @Override

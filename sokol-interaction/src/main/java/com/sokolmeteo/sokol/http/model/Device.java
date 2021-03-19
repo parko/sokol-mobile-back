@@ -1,6 +1,7 @@
 package com.sokolmeteo.sokol.http.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sokolmeteo.sokol.http.dto.SokolResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
-public class Device {
+public class Device extends SokolResponse {
     @JsonProperty(value = "id")
     private String id;
     @JsonProperty(value = "created")

@@ -12,7 +12,7 @@ public interface HttpInteraction {
     //регистрация
     <T extends SokolResponse> ResponseEntity<T> post(String path, Object body, Class<T> clazz);
 
-    <T> ResponseEntity<T> get(String path, MultiValueMap<String, String> headers, Class<T> clazz);
+    <T extends SokolResponse> ResponseEntity<T> get(String path, MultiValueMap<String, String> headers, Class<T> clazz);
 
     //деавторизация
     void post(String path, MultiValueMap<String, String> headers);
