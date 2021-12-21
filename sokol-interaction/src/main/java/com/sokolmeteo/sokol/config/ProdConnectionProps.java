@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("prod")
+//@Profile("prod")
 @Getter
 public class ProdConnectionProps implements ConnectionProps {
     private final String tcpHost = "localhost";
