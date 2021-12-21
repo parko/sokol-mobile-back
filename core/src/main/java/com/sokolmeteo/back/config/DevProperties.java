@@ -3,8 +3,8 @@ package com.sokolmeteo.back.config;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-@Component
-@Profile("dev")
+//@Component
+//@Profile("dev")
 public class DevProperties implements AppProperties {
     private final String tcpHost = "185.27.193.112";
     private final int tcpPort = 8002;

@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("prod")
+//@Profile("prod")
 public class ProdProperties implements AppProperties {
     private final String tcpHost = "localhost";
     private final int tcpPort = 8001;
